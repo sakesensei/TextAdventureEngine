@@ -35,21 +35,14 @@ namespace TextAdventureWithVerbs
 			mainRoomCorridor.Exits.Add(Direction.west, mainRoom);
 
 			// Create Items
-			Item itemRock = new Item(true, "Rock", "It's just a simple rock...", "on the floor.");
+			Item itemRock = new Item(true, "Rock", "It's just a simple rock...", " on the floor.");
+			Item itemWindow = new Item(false, "Window", "You can see the sea. In fact, you can see she sells sea shells by the sea.", ".");
+
 
 			// Put Items inside Rooms
 			mainRoom.Items.Add("rock", itemRock);
-		
-			/*
-			public static void InitItemsInRoom(Room room, Item[] item)
-			{
-				for (int i = 0; i < item.Length; i++)
-				{
-					room.Items.Add(item[i]);
-				}
-			}
-			*/
-
+			mainRoom.Items.Add("window", itemWindow);
+					
 			// Init Variables
 			string currentMessage = currentRoom.Description;
 
@@ -73,7 +66,7 @@ namespace TextAdventureWithVerbs
 					// Items in the room
 					foreach (var roomItems in currentRoom.Items)
 					{
-						Message.Description($"There is a {roomItems.Value.Name} {roomItems.Value.Place}");
+						Message.Description($"There is a {roomItems.Value.Name}{roomItems.Value.Place}");
 					}
 				}
 				else
@@ -118,14 +111,22 @@ namespace TextAdventureWithVerbs
 								}
 								break;
 							#endregion
+							#region Pick up
 							case Verbs.pick:
 								if (!string.IsNullOrEmpty(target))
 								{
 									if (currentRoom.Items.TryGetValue(target, out Item pickItem))
 									{
-										currentMessage = $"Picked up {pickItem.Name}";
-										player.Inventory.Add($"{pickItem.Name}", pickItem);
-										currentRoom.Items.Remove(pickItem.Name);
+										if (pickItem.IsPickable)
+										{
+											currentMessage = $"Picked up {pickItem.Name}";
+											player.Inventory.Add($"{pickItem.Name}", pickItem);
+											currentRoom.Items.Remove(pickItem.Name);
+										}
+										else
+										{
+											currentMessage = "You can't pick that up";
+										}
 									}
 									isNewRoom = false;
 								}
@@ -135,6 +136,7 @@ namespace TextAdventureWithVerbs
 									isNewRoom = false;
 								}
 								break;
+							#endregion
 							#region Inspect Things
 							case Verbs.inspect:
 								if (!string.IsNullOrEmpty(target))
@@ -148,6 +150,10 @@ namespace TextAdventureWithVerbs
 								else
 								{
 									currentMessage = currentRoom.Description;
+									foreach (var roomItems in currentRoom.Items)
+									{
+										Message.Description($"There is a {roomItems.Value.Name}{roomItems.Value.Place}");
+									}
 									isNewRoom = false;
 								}
 								break;
