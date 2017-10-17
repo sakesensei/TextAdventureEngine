@@ -64,9 +64,12 @@ namespace TextAdventureWithVerbs
 					// Full room description
 					Message.Description(currentMessage);
 					// Items in the room
-					foreach (var roomItems in currentRoom.Items)
+					if (!currentRoom.Items.GetEnumerator().MoveNext())
 					{
-						Message.Description($"There is a {roomItems.Value.Name}{roomItems.Value.Place}");
+						foreach (var roomItems in currentRoom.Items)
+						{
+							Message.Description($"There is a {roomItems.Value.Name}{roomItems.Value.Place}");
+						}
 					}
 				}
 				else
@@ -135,6 +138,24 @@ namespace TextAdventureWithVerbs
 									currentMessage = "Pick what?";
 									isNewRoom = false;
 								}
+								break;
+							#endregion
+							#region Inventory
+							case Verbs.inventory:
+								if (player.Inventory.GetEnumerator().MoveNext())
+								{
+									Console.WriteLine($"Inventory: ");
+									foreach (var item in player.Inventory)
+									{
+										Console.Write($" {item.Key}");
+										currentMessage = "";
+									}
+								}
+								else
+								{
+									currentMessage = "You inventory is empty.";
+								}
+								isNewRoom = false;
 								break;
 							#endregion
 							#region Inspect Things
