@@ -27,7 +27,7 @@ namespace GameSystem
 		public static void InitItems()
 		{
 			// TODO
-			Item myItem = new Item("Rock", "It's just a rock...", "on the floor.");
+			Item myItem = new Item(true, "Rock", "It's just a rock...", "on the floor.");
 		}
 
 		/*

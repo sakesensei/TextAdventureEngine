@@ -94,7 +94,7 @@ namespace TextAdventureWithVerbs
 					{
 						switch (action)
 						{
-							// Movement
+							#region Movement
 							case Verbs.go:
 								if (!string.IsNullOrEmpty(target) && Enum.TryParse<Direction>(target, out Direction exit))
 								{
@@ -117,11 +117,28 @@ namespace TextAdventureWithVerbs
 									isNewRoom = false;
 								}
 								break;
-							// Inspect things
+							#endregion
+							case Verbs.pick:
+								if (!string.IsNullOrEmpty(target))
+								{
+									if (currentRoom.Items.TryGetValue(target, out Item pickItem))
+									{
+										currentMessage = $"Picked up {pickItem.Name}";
+										player.Inventory.Add($"{pickItem.Name}", pickItem);
+										currentRoom.Items.Remove(pickItem.Name);
+									}
+									isNewRoom = false;
+								}
+								else
+								{
+									currentMessage = "Pick what?";
+									isNewRoom = false;
+								}
+								break;
+							#region Inspect Things
 							case Verbs.inspect:
 								if (!string.IsNullOrEmpty(target))
 								{
-									//TODO
 									if (currentRoom.Items.TryGetValue(target, out Item inspectItem))
 									{
 										currentMessage = inspectItem.Description;
@@ -134,13 +151,15 @@ namespace TextAdventureWithVerbs
 									isNewRoom = false;
 								}
 								break;
-							// Clear Screen
+							#endregion
+							#region Clear Screen
 							case Verbs.clear:
 								Console.Clear();
 								currentMessage = currentRoom.Description;
 								isNewRoom = true;
 								break;
-							// Help
+							#endregion
+							#region Help
 							case Verbs.help:
 								if (string.IsNullOrEmpty(target))
 								{
@@ -148,8 +167,10 @@ namespace TextAdventureWithVerbs
 									isNewRoom = false;
 								}
 								break;
-							//Quit
+							#endregion
+							#region Quit
 							case Verbs.quit: isPlaying = false; break;
+							#endregion
 							default: break;
 						}
 					}
