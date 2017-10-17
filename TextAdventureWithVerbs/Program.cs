@@ -20,31 +20,34 @@ namespace TextAdventureWithVerbs
 			Player player = new Player();
 
 			// Create Rooms
-			Room mainRoom = new Room("Main Hall", "You're in a big hall. There's a door to the East.");
-			Room mainRoomCorridor = new Room("Hall Corridor", "You're in a long corridor. There's a Hall to the West.");
+			Room mainRoom = new Room("Small Cell", "You're in a small dark cell.", "You wake up feeling awful in a dark damp tiny cell. You hear distant echos. There's a door to the north.");
+			Room cellCorridor = new Room("Hall Corridor", "You're in a long corridor.", "You reach a long and dark corridor. There's a huge holding cell to your right. There's a faint light to the north and a door to the south.");
 
 			// Starting room:
 			Room currentRoom = mainRoom;
 
 			// Put Rooms in the World
 			World.Add(mainRoom);
-			World.Add(mainRoomCorridor);
+			World.Add(cellCorridor);
 
 			// Create Room Exits
-			mainRoom.Exits.Add(Direction.east, mainRoomCorridor);
-			mainRoomCorridor.Exits.Add(Direction.west, mainRoom);
+			mainRoom.Exits.Add(Direction.north, cellCorridor);
+			cellCorridor.Exits.Add(Direction.south, mainRoom);
+
 
 			// Create Items
-			Item itemRock = new Item(true, "Rock", "It's just a simple rock...", " on the floor.");
-			Item itemWindow = new Item(false, "Window", "You can see the sea. In fact, you can see she sells sea shells by the sea.", ".");
+			Item itemCellKey = new Item(true, "Key", "It's a small rusty cell key.", "on the floor.");
+			Item itemCellSkylight = new Item(false, "Skylight", "There's a couple of bricks missing in the ceiling letting through a faint light.", "above you.");
+			Item itemCellDoor = new Item(false, "Door", "It's a cell door.", "in front of you.");
 
 
 			// Put Items inside Rooms
-			mainRoom.Items.Add("rock", itemRock);
-			mainRoom.Items.Add("window", itemWindow);
-					
+			mainRoom.Items.Add("key", itemCellKey);
+			mainRoom.Items.Add("skylight", itemCellSkylight);
+			mainRoom.Items.Add("door", itemCellDoor);
+
 			// Init Variables
-			string currentMessage = currentRoom.Description;
+			string currentMessage = currentRoom.FirstDescription;
 
 			bool isPlaying = true;
 			bool isNewRoom = true;
@@ -68,7 +71,7 @@ namespace TextAdventureWithVerbs
 					{
 						foreach (var roomItems in currentRoom.Items)
 						{
-							Message.Description($"There is a {roomItems.Value.Name}{roomItems.Value.Place}");
+							Message.Description($"{roomItems.Value.Name} {roomItems.Value.Place}");
 						}
 					}
 				}
@@ -97,19 +100,21 @@ namespace TextAdventureWithVerbs
 									currentRoom.Exits.TryGetValue(exit, out Room destination);
 									if (destination != null)
 									{
+										currentMessage = (destination.IsFirstTime) ? destination.FirstDescription : destination.Description;
+										destination.IsFirstTime = false;
+
 										currentRoom = destination;
-										currentMessage = currentRoom.Description;
 										isNewRoom = true;
 									}
 									else
 									{
-										currentMessage = "There's no exit that way.";
+										currentMessage = "You can't go that way.";
 										isNewRoom = false;
 									}
 								}
 								else
 								{
-									currentMessage = "Go where?";
+									currentMessage = $"Go where?";
 									isNewRoom = false;
 								}
 								break;
@@ -122,14 +127,18 @@ namespace TextAdventureWithVerbs
 									{
 										if (pickItem.IsPickable)
 										{
-											currentMessage = $"Picked up {pickItem.Name}";
-											player.Inventory.Add($"{pickItem.Name}", pickItem);
 											currentRoom.Items.Remove(pickItem.Name);
+											player.Inventory.Add($"{pickItem.Name}", pickItem);
+											currentMessage = $"Picked up {pickItem.Name}";
 										}
 										else
 										{
 											currentMessage = "You can't pick that up";
 										}
+									}
+									else
+									{
+										currentMessage = "Pick what?";
 									}
 									isNewRoom = false;
 								}
@@ -144,7 +153,7 @@ namespace TextAdventureWithVerbs
 							case Verbs.inventory:
 								if (player.Inventory.GetEnumerator().MoveNext())
 								{
-									Console.WriteLine($"Inventory: ");
+									Console.WriteLine($"\nInventory: ");
 									foreach (var item in player.Inventory)
 									{
 										Console.Write($" {item.Key}");
@@ -153,7 +162,7 @@ namespace TextAdventureWithVerbs
 								}
 								else
 								{
-									currentMessage = "You inventory is empty.";
+									currentMessage = $"\nYou inventory is empty.";
 								}
 								isNewRoom = false;
 								break;
@@ -166,14 +175,19 @@ namespace TextAdventureWithVerbs
 									{
 										currentMessage = inspectItem.Description;
 									}
+									else
+									{
+										currentMessage = $"There is no such thing as a {target}";
+									}
 									isNewRoom = false;
 								}
 								else
 								{
-									currentMessage = currentRoom.Description;
+									currentMessage = "";
+									Console.WriteLine($"You look arround and see:\n");
 									foreach (var roomItems in currentRoom.Items)
 									{
-										Message.Description($"There is a {roomItems.Value.Name}{roomItems.Value.Place}");
+										Message.Description($"{roomItems.Value.Name} {roomItems.Value.Place}");
 									}
 									isNewRoom = false;
 								}
@@ -190,7 +204,7 @@ namespace TextAdventureWithVerbs
 							case Verbs.help:
 								if (string.IsNullOrEmpty(target))
 								{
-									currentMessage = $"You can \"Go\", \"Inspect\", \"Clear\", \"Quit\".";
+									currentMessage = $"You can \"Go\", \"Pick\", \"Inspect\", \"Clear\", \"Quit\".";
 									isNewRoom = false;
 								}
 								break;
