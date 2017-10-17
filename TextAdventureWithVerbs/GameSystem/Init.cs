@@ -1,4 +1,5 @@
-﻿using System;
+﻿/*
+using System;
 using System.Collections.Generic;
 
 using Enums;
@@ -30,7 +31,7 @@ namespace GameSystem
 			Item myItem = new Item(true, "Rock", "It's just a rock...", "on the floor.");
 		}
 
-		/*
+		
 		public static void InitItemsInRoom(Room room, Item[] item)
 		{
 			for (int i = 0; i < item.Length; i++)
@@ -38,10 +39,11 @@ namespace GameSystem
 				room.Items.Add(item[i]);
 			}
 		}
-		*/
+		
 		public static void PutItemsInRooms()
 		{
 			
 		}
 	}
 }
+*/
