@@ -15,7 +15,10 @@ namespace TextAdventureWithVerbs
 			#region Initialize
 			// Initialize World and Rooms
 			List<Room> World = new List<Room>();
-			
+
+			// Initialize Player
+			Player player = new Player();
+
 			// Create Rooms
 			Room mainRoom = new Room("Main Hall", "You're in a big hall. There's a door to the East.");
 			Room mainRoomCorridor = new Room("Hall Corridor", "You're in a long corridor. There's a Hall to the West.");
@@ -32,10 +35,10 @@ namespace TextAdventureWithVerbs
 			mainRoomCorridor.Exits.Add(Direction.west, mainRoom);
 
 			// Create Items
-			Item rock = new Item("Rock", "It's just a simple rock...", "on the floor.");
+			Item itemRock = new Item(true, "Rock", "It's just a simple rock...", "on the floor.");
 
 			// Put Items inside Rooms
-			mainRoom.Items.Add(rock);
+			mainRoom.Items.Add("rock", itemRock);
 		
 			/*
 			public static void InitItemsInRoom(Room room, Item[] item)
@@ -68,9 +71,9 @@ namespace TextAdventureWithVerbs
 					// Full room description
 					Message.Description(currentMessage);
 					// Items in the room
-					foreach (Item roomItems in currentRoom.Items)
+					foreach (var roomItems in currentRoom.Items)
 					{
-						Message.Description($"There is a {roomItems.Name} {roomItems.Place}");
+						Message.Description($"There is a {roomItems.Value.Name} {roomItems.Value.Place}");
 					}
 				}
 				else
@@ -78,7 +81,7 @@ namespace TextAdventureWithVerbs
 					Message.Description(currentMessage);
 				}
 
-				// Get Command
+				// Get Console Command
 				Console.Write("\n> ");
 				playerInput = Console.ReadLine().ToLower();
 
@@ -119,14 +122,15 @@ namespace TextAdventureWithVerbs
 								if (!string.IsNullOrEmpty(target))
 								{
 									//TODO
-									
-
-
+									if (currentRoom.Items.TryGetValue(target, out Item inspectItem))
+									{
+										currentMessage = inspectItem.Description;
+									}
 									isNewRoom = false;
 								}
 								else
 								{
-									currentMessage = "Inspect what?";
+									currentMessage = currentRoom.Description;
 									isNewRoom = false;
 								}
 								break;

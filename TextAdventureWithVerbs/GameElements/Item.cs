@@ -7,16 +7,23 @@ namespace GameElements
 {
 	public class Item : Base
 	{
-		private string place;
+		private string _place;
+		private bool _isPickable;
 
 		public string Place
 		{
-			get { return place; }
-			set { place = value; }
+			get { return _place; }
+			set { _place = value; }
+		}
+		public bool IsPickable
+		{
+			get { return _isPickable; }
+			set { _isPickable = value; }
 		}
 
-		public Item(string name, string description, string place) : base(name, description)
+		public Item(bool isPickable, string name, string description, string place) : base(name, description)
 		{
+			IsPickable = isPickable;
 			Place = place;
 		}
 	}
