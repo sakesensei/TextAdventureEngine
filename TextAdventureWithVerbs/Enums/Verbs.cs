@@ -8,6 +8,7 @@
 		attack,
 		pick,
 		drop,
+		use,
 		inventory,
 		inspect,
 		wait,
