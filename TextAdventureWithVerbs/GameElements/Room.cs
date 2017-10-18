@@ -8,7 +8,7 @@ namespace GameElements
 	public class Room : Base
 	{
 		private string _firstDescription;
-		private bool _isFirstTime = false;
+		private bool _isFirstTime = true;
 		private Dictionary<Direction, Room> _exits = new Dictionary<Direction, Room>();
 		private Dictionary<string, Item> _items = new Dictionary<string, Item>();
 

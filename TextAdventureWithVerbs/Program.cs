@@ -36,9 +36,9 @@ namespace TextAdventureWithVerbs
 
 
 			// Create Items
-			Item itemCellKey = new Item(true, "Key", "It's a small rusty cell key.", "on the floor.");
-			Item itemCellSkylight = new Item(false, "Skylight", "There's a couple of bricks missing in the ceiling letting through a faint light.", "above you.");
-			Item itemCellDoor = new Item(false, "Door", "It's a cell door.", "in front of you.");
+			Item itemCellKey = new Item(true, "key", "It's a small rusty cell key.", "on the floor.");
+			Item itemCellSkylight = new Item(false, "skylight", "There's a couple of bricks missing in the ceiling letting through a faint light.", "above you.");
+			Item itemCellDoor = new Item(false, "door", "It's a cell door.", "in front of you.");
 
 
 			// Put Items inside Rooms
@@ -156,7 +156,7 @@ namespace TextAdventureWithVerbs
 									Console.WriteLine($"\nInventory: ");
 									foreach (var item in player.Inventory)
 									{
-										Console.Write($" {item.Key}");
+										Console.Write($"- {item.Key}");
 										currentMessage = "";
 									}
 								}
