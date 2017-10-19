@@ -20,7 +20,7 @@ namespace TextAdventureWithVerbs
 			Player player = new Player();
 
 			// Create Rooms
-			Room mainRoom = new Room("Small Cell", "You're in a small dark cell.", "You wake up feeling awful in a dark damp tiny cell. You hear distant echos. There's a door to the north.");
+			Room mainRoom = new Room("Small Cell", "You're in a small dark cell.", "You woke up feeling awful in a dark damp tiny cell. You hear distant echos. There's a door to the north.");
 			Room cellCorridor = new Room("Cell Corridor", "You're in a long corridor.", "You reach a long and dark corridor. There's a huge holding cell to your right. There's a faint light to the north and a door to the south.");
 			Room ladderRoom = new Room("Ladder Room", "You're in a small room. There's a ladder that goes up.", "You're in a small flooded room. There's someone sitting in a corner. There's a rusty ladder that goes Up.");
 			Room bonfireRoom = new Room("Bonfire Room", "You're in a large hall. There's a ladder down and some gates south.", "You're in a large hall. In the middle of the hall there's a bonfire with an old sword burning amid the fire. There's a ladder down. A big wooden gate blocks your way to the south.");
@@ -95,7 +95,7 @@ namespace TextAdventureWithVerbs
 
 				// Get Console Command
 				Console.Write("\n> ");
-				playerInput = Console.ReadLine().ToLower();
+				playerInput = Console.ReadLine();
 
 				Command.GetInput(playerInput, out inputArray);
 				Command.Action(inputArray, out string verb, out string target);
@@ -108,7 +108,7 @@ namespace TextAdventureWithVerbs
 						{
 							#region Movement
 							case Verbs.go:
-								if (!string.IsNullOrEmpty(target) && Enum.TryParse<Direction>(target, out Direction exit))
+								if (Command.IsValid(target) && Enum.TryParse<Direction>(target, out Direction exit))
 								{
 									currentRoom.Exits.TryGetValue(exit, out Room destination);
 									if (destination != null)
@@ -121,7 +121,7 @@ namespace TextAdventureWithVerbs
 									}
 									else
 									{
-										currentMessage = "You can't go that way.";
+										currentMessage = Command.ErrorMessage(action);
 										isNewRoom = false;
 									}
 								}
@@ -134,7 +134,7 @@ namespace TextAdventureWithVerbs
 							#endregion
 							#region Pick up
 							case Verbs.pick:
-								if (!string.IsNullOrEmpty(target))
+								if (Command.IsValid(target))
 								{
 									if (currentRoom.Items.TryGetValue(target, out Item pickItem))
 									{
@@ -146,7 +146,7 @@ namespace TextAdventureWithVerbs
 										}
 										else
 										{
-											currentMessage = "You can't pick that up";
+											currentMessage = Command.ErrorMessage(action);
 										}
 									}
 									else
@@ -164,12 +164,12 @@ namespace TextAdventureWithVerbs
 							#endregion
 							#region Drop
 							case Verbs.drop:
-								if (!string.IsNullOrEmpty(target))
+								if (Command.IsValid(target))
 								{
 									if (player.Inventory.TryGetValue(target, out Item dropItem))
 									{
 										// Let's assume the player can drop anything
-										
+
 										player.Inventory.Remove(dropItem.Name);
 										currentRoom.Items.Add($"{dropItem.Name}", dropItem);
 										currentMessage = $"Dropped {dropItem.Name}";
@@ -188,28 +188,28 @@ namespace TextAdventureWithVerbs
 								break;
 							#endregion
 							#region Use
-								/*
-							case Verbs.use:
-								if (!string.IsNullOrEmpty(target))
+							/*
+						case Verbs.use:
+							if (!string.IsNullOrEmpty(target))
+							{
+								Item useItem;
+								if (currentRoom.Items.TryGetValue(target, out useItem) || player.Inventory.TryGetValue(target, out useItem))
 								{
-									Item useItem;
-									if (currentRoom.Items.TryGetValue(target, out useItem) || player.Inventory.TryGetValue(target, out useItem))
-									{
-										currentMessage = $"Used {useItem.Name}";
-									}
-									else
-									{
-										currentMessage = "Use what?";
-									}
-									isNewRoom = false;
+									currentMessage = $"Used {useItem.Name}";
 								}
 								else
 								{
 									currentMessage = "Use what?";
-									isNewRoom = false;
 								}
-								break;
-								*/
+								isNewRoom = false;
+							}
+							else
+							{
+								currentMessage = "Use what?";
+								isNewRoom = false;
+							}
+							break;
+							*/
 							#endregion
 							#region Inventory
 							case Verbs.inventory:
@@ -231,7 +231,7 @@ namespace TextAdventureWithVerbs
 							#endregion
 							#region Inspect Things
 							case Verbs.inspect:
-								if (!string.IsNullOrEmpty(target))
+								if (Command.IsValid(target))
 								{
 									if (currentRoom.Items.TryGetValue(target, out Item inspectItem))
 									{
@@ -246,6 +246,7 @@ namespace TextAdventureWithVerbs
 								else
 								{
 									currentMessage = "";
+									Console.WriteLine($"{currentRoom.FirstDescription}\n");
 									Console.WriteLine($"You look arround and see:\n");
 									foreach (var roomItems in currentRoom.Items)
 									{
@@ -264,22 +265,27 @@ namespace TextAdventureWithVerbs
 							#endregion
 							#region Help
 							case Verbs.help:
-								if (string.IsNullOrEmpty(target))
+								if (!Command.IsValid(target))
 								{
-									currentMessage = $"You can \"Go\", \"Pick\", \"Inspect\", \"Clear\", \"Quit\".";
+									currentMessage = $"You can \"Go\", \"Pick\", \"Drop\", \"Inspect\", \"Clear\", \"Quit\".";
 									isNewRoom = false;
 								}
 								break;
 							#endregion
 							#region Quit
-							case Verbs.quit: isPlaying = false; break;
+							case Verbs.quit:
+								isPlaying = false;
+								break;
 							#endregion
-							default: break;
+							default:
+								currentMessage = Command.ErrorMessage(verb);
+								isNewRoom = false;
+								break;
 						}
 					}
 					else
 					{
-						currentMessage = "What?";
+						currentMessage = Command.ErrorMessage(verb);
 						isNewRoom = false;
 					}
 				}
