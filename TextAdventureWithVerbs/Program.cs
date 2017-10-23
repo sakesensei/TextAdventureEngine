@@ -44,12 +44,12 @@ namespace TextAdventureWithVerbs
 
 
 			// Create Items
-			Item itemCellKey = new Item(true, "key", "It's a small rusty cell key.", "on the floor.");
-			Item itemCellSkylight = new Item(false, "skylight", "There's a couple of bricks missing in the ceiling letting through a faint light.", "above you.");
-			Item itemCellDoor = new Item(false, "door", "It's a cell door.", "in front of you.");
-			Item itemHollow = new Item(false, "person", "It's a catatonic husk of a person. There's no response.", "sitting in a corner.");
-			Item itemBonfire = new Item(false, "bonfire", "It's a rather wild bonfire. Amidst the flames there is an incandescent old sword stuck to the ground.", "in the middle of the hall.");
-			Item itemBonfireGates = new Item(false, "gate", "Big sturdy heavy old wooden gate, blocking your path to the south.", "on the south wall.");
+			Item itemCellKey = new Item(true, false, "key", "It's a small rusty cell key.", "on the floor.");
+			Item itemCellSkylight = new Item(false, false, "skylight", "There's a couple of bricks missing in the ceiling letting through a faint light.", "above you.");
+			Item itemCellDoor = new Item(false, true, "door", "It's a cell door.", "in front of you.");
+			Item itemHollow = new Item(false, false, "person", "It's a catatonic husk of a person. There's no response.", "sitting in a corner.");
+			Item itemBonfire = new Item(false, false, "bonfire", "It's a rather wild bonfire. Amidst the flames there is an incandescent old sword stuck to the ground.", "in the middle of the hall.");
+			Item itemBonfireGates = new Item(false, true, "gate", "Big sturdy heavy old wooden gate, blocking your path to the south.", "on the south wall.");
 
 			// Put Items inside Rooms
 			mainRoom.Items.Add("key", itemCellKey);
