@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using Enums;
 using GameElements;
@@ -12,7 +11,6 @@ namespace TextAdventureWithVerbs
 	{
 		public static void Main(string[] args)
 		{
-			#region Initialize
 			// Initialize World and Rooms
 			List<Room> World = new List<Room>();
 
@@ -59,6 +57,7 @@ namespace TextAdventureWithVerbs
 			bonfireRoom.Items.Add("bonfire", itemBonfire);
 			bonfireRoom.Items.Add("gate", itemBonfireGates);
 
+
 			// Init Variables
 			string currentMessage = currentRoom.FirstDescription;
 
@@ -68,9 +67,9 @@ namespace TextAdventureWithVerbs
 
 			string[] inputArray = new string[4];
 
-			#endregion
 
-			#region Main Game Loop
+			// ----- MAIN LOOP ----- //
+
 			while (isPlaying)
 			{
 				if (isNewRoom)
@@ -90,7 +89,10 @@ namespace TextAdventureWithVerbs
 				}
 				else
 				{
-					Message.Description(currentMessage);
+					if (!string.IsNullOrEmpty(currentMessage))
+					{
+						Message.Description(currentMessage);
+					}
 				}
 
 				// Get Console Command
@@ -247,11 +249,16 @@ namespace TextAdventureWithVerbs
 								{
 									currentMessage = "";
 									Console.WriteLine($"{currentRoom.FirstDescription}\n");
-									Console.WriteLine($"You look arround and see:\n");
-									foreach (var roomItems in currentRoom.Items)
+
+									if (currentRoom.Items.Count != 0)
 									{
-										Message.Description($"A {roomItems.Value.Name} {roomItems.Value.Place}");
+										Console.WriteLine($"You look arround and see:\n");
+										foreach (var roomItems in currentRoom.Items)
+										{
+											Message.Description($"A {roomItems.Value.Name} {roomItems.Value.Place}");
+										}
 									}
+
 									isNewRoom = false;
 								}
 								break;
@@ -294,7 +301,6 @@ namespace TextAdventureWithVerbs
 					isNewRoom = false;
 				}
 			}
-			#endregion
 		}
 	}
 }
